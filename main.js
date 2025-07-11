@@ -2,11 +2,10 @@ let scene, camera, renderer, model;
 let targetRotX = 0, targetRotY = 0;
 let currentRotX = 0, currentRotY = 0;
 
-// 配置参数
-const ROTATION_THRESHOLD = 2;
-const DAMPING = 0.07;
-const MAX_ROT_X = Math.PI / 4;
-const MAX_ROT_Y = Math.PI / 3;
+// 参数设定
+const MAX_ROT_X = Math.PI / 4;  // 最大上下旋转 ±45°
+const MAX_ROT_Y = Math.PI / 4;  // 最大左右旋转 ±45°
+const DAMPING = 0.08;           // 平滑阻尼
 
 window.onload = function () {
   init();
@@ -50,23 +49,15 @@ function init() {
 }
 
 function handleOrientation(event) {
-  const rawBeta = event.beta || 0;   // X轴：上下抬头
+  const rawBeta = event.beta || 0;   // X轴：上下倾斜
   const rawGamma = event.gamma || 0; // Y轴：左右倾斜
 
-  // 竖屏保护机制：如果手机太直立（beta 接近 ±90°），不更新模型
-  if (Math.abs(rawBeta) > 85) return;
+  // 缩放至 [-1, 1] 区间后映射到 ±45°
+  const normalizedX = Math.max(-1, Math.min(1, rawBeta / 90));
+  const normalizedY = Math.max(-1, Math.min(1, rawGamma / 90));
 
-  const nextX = rawBeta * Math.PI / 180;
-  const nextY = rawGamma * Math.PI / 180;
-
-  // 抖动过滤
-  if (Math.abs(nextX - targetRotX) * 180 / Math.PI > ROTATION_THRESHOLD ||
-      Math.abs(nextY - targetRotY) * 180 / Math.PI > ROTATION_THRESHOLD) {
-    return;
-  }
-
-  targetRotX = THREE.MathUtils.clamp(nextX, -MAX_ROT_X, MAX_ROT_X);
-  targetRotY = THREE.MathUtils.clamp(nextY, -MAX_ROT_Y, MAX_ROT_Y);
+  targetRotX = normalizedX * MAX_ROT_X;
+  targetRotY = normalizedY * MAX_ROT_Y;
 }
 
 function animate() {
