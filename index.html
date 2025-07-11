@@ -2,18 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>3D手机姿态演示</title>
+  <title>手机姿态控制3D模型 - 模块版</title>
   <style>
     body { margin: 0; overflow: hidden; }
     canvas { display: block; }
-    #btn { position: absolute; top: 10px; left: 10px; z-index: 999; background: #fff; padding: 10px; }
+    #btn { position: absolute; top: 10px; left: 10px; z-index: 999; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
   </style>
-  <!-- 使用CDN引入Three.js和GLTFLoader -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
   <button id="btn">点击启用传感器</button>
-  <script src="main.js"></script>
+
+  <script type="module" src="main.js"></script>
 </body>
 </html>
