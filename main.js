@@ -1,8 +1,15 @@
 let scene, camera, renderer, model;
-let rotationX = 0, rotationY = 0, rotationZ = 0;
+let targetRotX = 0, targetRotY = 0, targetRotZ = 0;
+let currentRotX = 0, currentRotY = 0, currentRotZ = 0;
 
-init();
-animate();
+// 阈值 & 阻尼系数
+const ROTATION_THRESHOLD = 3; // 超过这个角度变化视为剧烈晃动
+const DAMPING = 0.1;
+
+window.onload = function () {
+  init();
+  animate();
+};
 
 function init() {
   scene = new THREE.Scene();
@@ -41,17 +48,33 @@ function init() {
 }
 
 function handleOrientation(event) {
-  rotationX = event.beta || 0;
-  rotationY = event.gamma || 0;
-  rotationZ = event.alpha || 0;
+  const rawX = event.beta || 0;   // [-180, 180]
+  const rawY = event.gamma || 0;  // [-90, 90]
+  const rawZ = event.alpha || 0;  // [0, 360]
+
+  // 如果角度变化过大，说明是剧烈抖动，不更新
+  if (
+    Math.abs(rawX - targetRotX * 180 / Math.PI) > ROTATION_THRESHOLD ||
+    Math.abs(rawY - targetRotY * 180 / Math.PI) > ROTATION_THRESHOLD ||
+    Math.abs(rawZ - targetRotZ * 180 / Math.PI) > ROTATION_THRESHOLD
+  ) return;
+
+  targetRotX = rawX * Math.PI / 180;
+  targetRotY = rawY * Math.PI / 180;
+  targetRotZ = rawZ * Math.PI / 180;
 }
 
 function animate() {
   requestAnimationFrame(animate);
   if (model) {
-    model.rotation.x += (rotationX * Math.PI / 180 - model.rotation.x) * 0.1;
-    model.rotation.y += (rotationY * Math.PI / 180 - model.rotation.y) * 0.1;
-    model.rotation.z += (rotationZ * Math.PI / 180 - model.rotation.z) * 0.1;
+    // 使用线性插值实现阻尼（平滑移动）
+    currentRotX += (targetRotX - currentRotX) * DAMPING;
+    currentRotY += (targetRotY - currentRotY) * DAMPING;
+    currentRotZ += (targetRotZ - currentRotZ) * DAMPING;
+
+    model.rotation.x = currentRotX;
+    model.rotation.y = currentRotY;
+    model.rotation.z = currentRotZ;
   }
   renderer.render(scene, camera);
 }
