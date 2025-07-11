@@ -1,10 +1,12 @@
 let scene, camera, renderer, model;
-let targetRotX = 0, targetRotY = 0, targetRotZ = 0;
-let currentRotX = 0, currentRotY = 0, currentRotZ = 0;
+let targetRotX = 0, targetRotY = 0;
+let currentRotX = 0, currentRotY = 0;
 
-// 阈值 & 阻尼系数
-const ROTATION_THRESHOLD = 3; // 超过这个角度变化视为剧烈晃动
-const DAMPING = 0.1;
+// 配置参数
+const ROTATION_THRESHOLD = 2;     // 角度阈值，超过视为剧烈晃动
+const DAMPING = 0.07;             // 阻尼系数
+const MAX_ROT_X = Math.PI / 4;    // 最大X旋转角（上下）
+const MAX_ROT_Y = Math.PI / 3;    // 最大Y旋转角（左右）
 
 window.onload = function () {
   init();
@@ -48,33 +50,32 @@ function init() {
 }
 
 function handleOrientation(event) {
-  const rawX = event.beta || 0;   // [-180, 180]
-  const rawY = event.gamma || 0;  // [-90, 90]
-  const rawZ = event.alpha || 0;  // [0, 360]
+  const rawBeta = event.beta || 0;   // X轴：上下抬头（[-180, 180]）
+  const rawGamma = event.gamma || 0; // Y轴：左右倾斜（[-90, 90]）
 
-  // 如果角度变化过大，说明是剧烈抖动，不更新
-  if (
-    Math.abs(rawX - targetRotX * 180 / Math.PI) > ROTATION_THRESHOLD ||
-    Math.abs(rawY - targetRotY * 180 / Math.PI) > ROTATION_THRESHOLD ||
-    Math.abs(rawZ - targetRotZ * 180 / Math.PI) > ROTATION_THRESHOLD
-  ) return;
+  const nextX = rawBeta * Math.PI / 180;
+  const nextY = rawGamma * Math.PI / 180;
 
-  targetRotX = rawX * Math.PI / 180;
-  targetRotY = rawY * Math.PI / 180;
-  targetRotZ = rawZ * Math.PI / 180;
+  // 抖动过滤（角度变化过大时忽略）
+  if (Math.abs(nextX - targetRotX) * 180 / Math.PI > ROTATION_THRESHOLD ||
+      Math.abs(nextY - targetRotY) * 180 / Math.PI > ROTATION_THRESHOLD) {
+    return;
+  }
+
+  // 设置限制范围
+  targetRotX = THREE.MathUtils.clamp(nextX, -MAX_ROT_X, MAX_ROT_X);
+  targetRotY = THREE.MathUtils.clamp(nextY, -MAX_ROT_Y, MAX_ROT_Y);
 }
 
 function animate() {
   requestAnimationFrame(animate);
   if (model) {
-    // 使用线性插值实现阻尼（平滑移动）
+    // 应用阻尼插值
     currentRotX += (targetRotX - currentRotX) * DAMPING;
     currentRotY += (targetRotY - currentRotY) * DAMPING;
-    currentRotZ += (targetRotZ - currentRotZ) * DAMPING;
 
     model.rotation.x = currentRotX;
     model.rotation.y = currentRotY;
-    model.rotation.z = currentRotZ;
   }
   renderer.render(scene, camera);
 }
