@@ -2,10 +2,9 @@ let scene, camera, renderer, model;
 let targetRotX = 0, targetRotY = 0;
 let currentRotX = 0, currentRotY = 0;
 
-// 参数设定
-const MAX_ROT_X = Math.PI / 4;  // 最大上下旋转 ±45°
-const MAX_ROT_Y = Math.PI / 4;  // 最大左右旋转 ±45°
-const DAMPING = 0.08;           // 平滑阻尼
+const MAX_ROT_X = Math.PI / 4;  // 45°
+const MAX_ROT_Y = Math.PI / 4;  // 45°
+const DAMPING = 0.1;
 
 window.onload = function () {
   init();
@@ -49,15 +48,15 @@ function init() {
 }
 
 function handleOrientation(event) {
-  const rawBeta = event.beta || 0;   // X轴：上下倾斜
-  const rawGamma = event.gamma || 0; // Y轴：左右倾斜
+  const beta = event.beta || 0;   // [-180, 180] 上下
+  const gamma = event.gamma || 0; // [-90, 90] 左右
 
-  // 缩放至 [-1, 1] 区间后映射到 ±45°
-  const normalizedX = Math.max(-1, Math.min(1, rawBeta / 90));
-  const normalizedY = Math.max(-1, Math.min(1, rawGamma / 90));
+  // 使用 sin 映射，提升响应感知范围
+  const factorX = Math.sin(beta * Math.PI / 180);   // [-1, 1]
+  const factorY = Math.sin(gamma * Math.PI / 180);  // [-1, 1]
 
-  targetRotX = normalizedX * MAX_ROT_X;
-  targetRotY = normalizedY * MAX_ROT_Y;
+  targetRotX = factorX * MAX_ROT_X;
+  targetRotY = factorY * MAX_ROT_Y;
 }
 
 function animate() {
