@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>手机姿态控制3D模型</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+    #btn { position: absolute; top: 10px; left: 10px; z-index: 999; background: #fff; padding: 10px; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+  <script type="module">
+  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js';
+  import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/loaders/GLTFLoader.js';
+
+  // 示例代码（仅说明）
+  const loader = new GLTFLoader();
+</script>
+
+  <script src="main.js"></script>
+</head>
+<body>
+  <button id="btn">点击启用传感器</button>
+</body>
+</html>
