@@ -2,8 +2,8 @@ let scene, camera, renderer, model;
 let targetRotX = 0, targetRotY = 0;
 let currentRotX = 0, currentRotY = 0;
 
-const MAX_ROT_X = Math.PI / 4;  // 45°
-const MAX_ROT_Y = Math.PI / 4;  // 45°
+const MAX_ROT_X = Math.PI / 12;  // 15°
+const MAX_ROT_Y = Math.PI / 12;  // 15°
 const DAMPING = 0.1;
 
 window.onload = function () {
@@ -48,12 +48,12 @@ function init() {
 }
 
 function handleOrientation(event) {
-  const beta = event.beta || 0;   // [-180, 180] 上下
-  const gamma = event.gamma || 0; // [-90, 90] 左右
+  const beta = event.beta || 0;   // 上下倾斜 [-180,180]
+  const gamma = event.gamma || 0; // 左右倾斜 [-90,90]
 
-  // 使用 sin 映射，提升响应感知范围
-  const factorX = Math.sin(beta * Math.PI / 180);   // [-1, 1]
-  const factorY = Math.sin(gamma * Math.PI / 180);  // [-1, 1]
+  // 相对水平（beta ≈ 0）和居中（gamma ≈ 0）做映射
+  const factorX = THREE.MathUtils.clamp(beta / 30, -1, 1);   // 上下最大影响约30度
+  const factorY = THREE.MathUtils.clamp(gamma / 30, -1, 1);  // 左右最大影响约30度
 
   targetRotX = factorX * MAX_ROT_X;
   targetRotY = factorY * MAX_ROT_Y;
