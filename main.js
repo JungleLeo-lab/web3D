@@ -6,7 +6,7 @@ let targetRotX = 0, targetRotY = 0;
 let currentRotX = 0, currentRotY = 0;
 
 const MAX_ROT_X = Math.PI / 12;  // 15°
-const MAX_ROT_Y = Math.PI / 12;  // 15°
+const MAX_ROT_Y = Math.PI / 12;  // 15°111
 const DAMPING = 0.1;
 
 window.onload = function () {
