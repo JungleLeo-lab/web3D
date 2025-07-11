@@ -2,16 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>手机姿态控制3D模型 - 模块版</title>
+  <title>姿态控制3D模型</title>
   <style>
     body { margin: 0; overflow: hidden; }
     canvas { display: block; }
-    #btn { position: absolute; top: 10px; left: 10px; z-index: 999; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
+    #btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 99;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 10px;
+    }
   </style>
 </head>
 <body>
   <button id="btn">点击启用传感器</button>
 
+  <!-- ✅ 一定要写 type="module"！ -->
   <script type="module" src="main.js"></script>
 </body>
 </html>
